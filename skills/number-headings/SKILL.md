@@ -1,95 +1,133 @@
 ---
 name: number-headings
-description: Add hierarchical numbering to Markdown headings. H1 uses Chinese numerals (一、二、三…), H2 and below use Arabic dot-notation (1.1, 1.1.1…). Use when the user wants to number or re-number headings in a Markdown document.
+description: Normalize and number Markdown headings. First fixes heading level structure (ensures H1 is the top level, no skipped levels), then adds hierarchical numbering: H1 uses Chinese numerals (一、二、三…), H2 and below use Arabic dot-notation (1.1, 1.1.1…). Use when the user wants to number or re-number headings in a Markdown document.
 argument-hint: <file.md> [file2.md ...]
 allowed-tools: Read, Edit, Write, Glob
-version: 1.0.0
+version: 1.1.0
 ---
 
-Add hierarchical numbering to the headings of the Markdown file(s) specified by: $ARGUMENTS
+Normalize heading levels and add hierarchical numbering to the Markdown file(s) specified by: $ARGUMENTS
 
 If no file is specified, look for Markdown files (`*.md`) in the current directory and ask the user which one to process (or process all if there's only one).
 
-## Numbering Rules
+## Phase 1 — Normalize Heading Levels
+
+Before numbering, fix the heading structure so it is logically consistent:
+
+### Step 1: Promote to H1
+
+Find the minimum heading level used in the document (ignoring headings inside code blocks and YAML front matter). If the minimum is not H1, shift **all** headings up so the minimum becomes H1.
+
+Example: a document that starts at H2 (`##`) gets every heading promoted by 1 level.
+
+### Step 2: Fix Skipped Levels
+
+After promotion, scan headings in order. A heading may not be more than **1 level deeper** than the previous heading. If a gap exists, reduce the heading's level to be exactly 1 deeper than the previous one.
+
+Rules:
+- The first heading in the document is always treated as H1 (already guaranteed by Step 1).
+- When a heading drops back to a shallower level, that is always allowed — only deepening by more than 1 is forbidden.
+
+Example of gap fixing:
+
+| Before | After (normalized) | Reason |
+|--------|-------------------|--------|
+| `# A` | `# A` | — |
+| `### B` | `## B` | H3 after H1 → gap of 2, reduce to H2 |
+| `#### C` | `### C` | H4 after (normalized) H2 → gap of 2, reduce to H3 |
+| `## D` | `## D` | Allowed (shallower) |
+
+> **Important:** Only the `#` prefix is changed. The heading text is never modified during normalization.
+
+---
+
+## Phase 2 — Number Headings
+
+After normalization, apply hierarchical numbering using the rules below.
+
+### Numbering Format
 
 - **H1 (`#`)** → Chinese numeral + 、: `# 一、Title`
-- **H2 (`##`)** → `## 1.1 Title` (Arabic, using the H1 index in Arabic as the first component)
+- **H2 (`##`)** → `## 1.1 Title`
 - **H3 (`###`)** → `### 1.1.1 Title`
 - **H4 (`####`)** → `#### 1.1.1.1 Title`
 - Continue the same dot-notation pattern for H5 and H6.
 
-**Chinese numeral mapping** (for H1 only):
+**Chinese numeral mapping** (for H1):
 
-| Index | Chinese |
-|-------|---------|
-| 1 | 一 |
-| 2 | 二 |
-| 3 | 三 |
-| 4 | 四 |
-| 5 | 五 |
-| 6 | 六 |
-| 7 | 七 |
-| 8 | 八 |
-| 9 | 九 |
-| 10 | 十 |
-| 11 | 十一 |
-| 12 | 十二 |
+| 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 |
+|---|---|---|---|---|---|---|---|---|----|----|----|
+| 一 | 二 | 三 | 四 | 五 | 六 | 七 | 八 | 九 | 十 | 十一 | 十二 |
 
-For values beyond 12, continue the standard Chinese numeral composition rules.
+Continue standard Chinese numeral composition rules beyond 12.
 
-When a higher-level heading is encountered, reset all lower-level counters to zero.
+### Numbering Algorithm
 
-## Algorithm
+1. Maintain a counter array `[c1, c2, c3, c4, c5, c6]` initialized to all zeros.
+2. For each heading line (outside code blocks and front matter):
+   - Strip any existing numbering:
+     - H1: strip leading Chinese numeral + `、` (e.g., `一、`).
+     - H2+: strip leading Arabic dot-notation + space (e.g., `1.2 `, `1.2.3 `).
+   - Let `L` = heading level after normalization.
+   - Increment `c[L]`; reset `c[L+1]` through `c[6]` to 0.
+   - Build prefix:
+     - `L == 1`: `{chinese}、` (e.g., `三、`)
+     - `L >= 2`: `c[1].c[2]...c[L]` joined by dots, no trailing dot (e.g., `2.1.3`)
+   - Reconstruct line: `{'#' × L} {prefix} {clean_title}`
 
-1. Read the target file.
-2. Process lines one by one, tracking state:
-   - Maintain a counter array `[c1, c2, c3, c4, c5, c6]` initialized to all zeros.
-   - Track whether we are inside a fenced code block (lines between ` ``` ` or `~~~`). **Skip headings inside code blocks.**
-   - Skip YAML front matter (lines between `---` delimiters at the very top of the file).
-3. For each heading line outside a code block:
-   - Determine the heading level `L` (number of leading `#` characters).
-   - Strip any existing numbering from the heading text:
-     - For H1: strip a leading Chinese numeral followed by `、` (e.g., `一、`).
-     - For H2+: strip a leading Arabic dot-notation number followed by a space (e.g., `1.1 `, `1.2.3 `).
-   - Increment `c[L]` by 1.
-   - Reset `c[L+1]` through `c[6]` to 0.
-   - Build the number prefix:
-     - If `L == 1`: convert `c[1]` to its Chinese numeral, format as `{chinese}、` (e.g., `一、`).
-     - If `L >= 2`: join `c[1]` through `c[L]` with dots using Arabic numerals (e.g., `1.2.3`), no trailing dot.
-   - Reconstruct the line:
-     - H1: `# {chinese}、{clean_title}` (e.g., `# 二、实现`)
-     - H2+: `## {arabic_prefix} {clean_title}` (e.g., `## 2.1 概述`)
-4. Write the updated content back to the file using Edit (preferred) or Write.
-5. Report a summary: how many headings were numbered and at what levels.
+---
 
-## Example
+## Full Example
 
-**Input:**
+**Input (disordered levels):**
 ```markdown
-# Introduction
+## Overview
+#### Background
+### Goals
+###### Primary Goal
+## Implementation
+### Phase 1
+##### Detail
+```
+
+**After Phase 1 — Normalize:**
+```markdown
+# Overview
 ## Background
 ## Goals
 ### Primary Goal
-### Secondary Goal
 # Implementation
 ## Phase 1
-## Phase 2
+### Detail
 ```
+*(H2→H1, H4→H2 because gap from H1, H3→H2 because gap from H1, H6→H3 because gap from H2, H2→H1, H3→H2, H5→H3 because gap from H2)*
 
-**Output:**
+**After Phase 2 — Number:**
 ```markdown
-# 一、Introduction
+# 一、Overview
 ## 1.1 Background
 ## 1.2 Goals
 ### 1.2.1 Primary Goal
-### 1.2.2 Secondary Goal
 # 二、Implementation
 ## 2.1 Phase 1
-## 2.2 Phase 2
+### 2.1.1 Detail
 ```
+
+---
+
+## Output
+
+After processing, report:
+1. **Normalization changes**: list each heading that had its level changed, showing before → after.
+2. **Numbering summary**: total headings numbered, breakdown by level.
+
+If no level changes were needed, state "Heading levels are already well-structured."
+
+---
 
 ## Edge Cases
 
-- If the document has no H1, start numbering from the first heading level present. H1-level rules (Chinese numerals) only apply when actual `#` headings exist.
-- Do not modify headings inside code blocks (fenced with ` ``` ` or `~~~`).
-- If a heading already has numbering (Chinese or Arabic), strip it before applying new numbering (idempotent re-numbering).
+- Skip headings inside fenced code blocks (` ``` ` or `~~~`).
+- Skip YAML front matter (lines between `---` at the very top of the file).
+- If a heading already has numbering (Chinese or Arabic), strip it before re-numbering (idempotent).
+- If the document has only one heading level, normalization promotes it to H1 and numbering uses Chinese numerals only.
