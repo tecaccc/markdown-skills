@@ -1,0 +1,10 @@
+{
+  "name": "markdown-skills",
+  "description": "A collection of Claude Code skills for working with Markdown documents, including heading numbering, formatting, and document structure tools.",
+  "author": {
+    "name": "markdown-skills contributors",
+    "url": "https://github.com/tecaccc/markdown-skills"
+  },
+  "version": "1.0.0",
+  "license": "MIT"
+}
