@@ -1,6 +1,6 @@
 {
   "name": "markdown-skills",
-  "description": "A collection of Claude Code skills for working with Markdown documents, including heading numbering, formatting, and document structure tools.",
+  "description": "A collection of Claude Code skills for working with Markdown documents and PPT templates, including heading numbering, formatting, document structure tools, and AnHeng corporate PPT generation.",
   "author": {
     "name": "markdown-skills contributors",
     "url": "https://github.com/tecaccc/markdown-skills"
