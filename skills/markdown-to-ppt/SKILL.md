@@ -10,6 +10,10 @@ Generate a PPT presentation following the AnHeng (安恒信息) corporate templa
 
 If no arguments are provided, ask the user for the presentation title, subtitle, and chapter names.
 
+## Constraints
+
+- **Must use the `pencil` MCP tool** to create and compose all slides. All element placement, styling, and page assembly must be done through pencil tool calls.
+
 ---
 
 ## Canvas
@@ -59,22 +63,24 @@ Ratio:  16:9
 
 ## Image Assets
 
+All image assets are stored in `${CLAUDE_SKILL_DIR}/assets/`.
+
 ### Backgrounds
 
-| Filename | Original Size | Purpose | Pages |
-|----------|--------------|---------|-------|
-| **公司大楼.jpeg** | 1665×1649px | Right-side decorative BG (blue-red gradient overlay) | Page 1, 5 |
-| **标题背景.jpeg** | 2933×289px | Top title bar (purple-blue gradient) | Page 2, 4 |
-| **章节标题页背景.jpeg** | 2933×1650px | Full-screen BG (dark blue + red curves) | Page 3 |
+| Filename | Path | Original Size | Purpose | Pages |
+|----------|------|--------------|---------|-------|
+| **公司大楼.jpeg** | `${CLAUDE_SKILL_DIR}/assets/公司大楼.jpeg` | 1665×1649px | Right-side decorative BG (blue-red gradient overlay) | Page 1, 5 |
+| **标题背景.jpeg** | `${CLAUDE_SKILL_DIR}/assets/标题背景.jpeg` | 2933×289px | Top title bar (purple-blue gradient) | Page 2, 4 |
+| **章节标题页背景.jpeg** | `${CLAUDE_SKILL_DIR}/assets/章节标题页背景.jpeg` | 2933×1650px | Full-screen BG (dark blue + red curves) | Page 3 |
 
 ### Logos & Decorations
 
-| Filename | Original Size | Purpose | Pages |
-|----------|--------------|---------|-------|
-| **亚奥理事会合作Logo.png** | 725×408px | Top-left company logo | Page 1, 5 |
-| **标题背景文字.png** | 915×126px | White text logo on title bar right side | Page 2, 4 |
-| **安恒信息文字Logo.png** | 304×118px | Top-left white logo | Page 3 |
-| **安恒信息官方微信二维码.jpeg** | 198×198px | QR code | Page 5 |
+| Filename | Path | Original Size | Purpose | Pages |
+|----------|------|--------------|---------|-------|
+| **亚奥理事会合作Logo.png** | `${CLAUDE_SKILL_DIR}/assets/亚奥理事会合作Logo.png` | 725×408px | Top-left company logo | Page 1, 5 |
+| **标题背景文字.png** | `${CLAUDE_SKILL_DIR}/assets/标题背景文字.png` | 915×126px | White text logo on title bar right side | Page 2, 4 |
+| **安恒信息文字Logo.png** | `${CLAUDE_SKILL_DIR}/assets/安恒信息文字Logo.png` | 304×118px | Top-left white logo | Page 3 |
+| **安恒信息官方微信二维码.jpeg** | `${CLAUDE_SKILL_DIR}/assets/安恒信息官方微信二维码.jpeg` | 198×198px | QR code | Page 5 |
 
 ---
 
@@ -237,41 +243,51 @@ Right area (~50-55% width):
 
 **Logo:** Same as Page 1.
 
+**Left area layout principle:**
+- Left area width: 0–640px
+- All text, divider, QR code must **center-align on the vertical axis x=320px**
+- All elements use `text-align: center` or are horizontally centered at x=320px
+
 **"联系我们" title:**
-- Position: x≈300px (centered in left area), y≈270px
+- Position: centered at x=320px, y≈270px
 - Font: 微软雅黑, 24pt, Bold
 - Color: #08287F
+- Alignment: Center
 
 **"Contact Us" subtitle:**
-- Position: x≈330px, y≈310px
+- Position: centered at x=320px, y≈310px
 - Font: 微软雅黑, 11pt
 - Color: #08287F
+- Alignment: Center
 
 **Red divider line:**
-- Position: x≈300px (centered), y≈345px
+- Position: centered at x=320px, y≈345px
 - Size: 68px × 5px
 - Fill: #C00000
 
 **Company address:**
-- Position: x≈300px (centered), y≈365px
+- Position: centered at x=320px, y≈370px
 - Font: 微软雅黑, 11pt, Color: #08287F
 - Text: "浙江省杭州市滨江区西兴街道联慧街188号安恒大厦"
 - Max width: ~480px
+- Alignment: Center
 
 **Website & phone:**
-- Position: x≈300px (centered), y≈390px
+- Position: centered at x=320px, y≈395px
 - Font: 微软雅黑, 11pt, Color: #08287F
 - Text (two lines): "www.dbappsecurity.com.cn" / "400-6059-110"
+- Alignment: Center
 
 **QR code:**
 - Image: 安恒信息官方微信二维码.jpeg
-- Position: x≈270px (centered in left area), y≈470px
+- Position: centered at x=320px, y≈470px
 - Size: 87×87px
 
 **QR label:**
-- Position: x≈300px, y≈565px
+- Position: centered at x=320px, y≈565px
 - Font: 微软雅黑, 8pt, Color: #08287F
 - Text: "安恒信息官方微信"
+- Alignment: Center
 
 **Bottom contact:**
 - Position: x=50px, y=660px
@@ -329,7 +345,7 @@ Right area (~50-55% width):
 4. **Numbering**: TOC uses "01"–"05". Chapter title pages use the same numbering format.
 5. **Content pages**: For each chapter, generate at least one Page 4 (content page). Use the chapter name as the page title.
 6. **Contact page**: Always the last page. Use the fixed contact information specified above.
-7. **Output format**: Generate structured HTML with inline styles matching the coordinates and styles above, or Markdown with embedded layout comments, depending on user preference. Default to HTML for pixel-accurate layout.
+7. **Output format**: Use the `pencil` MCP tool to create the presentation, following the coordinates and styles specified above.
 
 ---
 
