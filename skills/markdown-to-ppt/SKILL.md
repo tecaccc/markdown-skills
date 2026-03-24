@@ -1,5 +1,5 @@
 ---
-name: ah-ppt-skills
+name: markdown-to-ppt
 description: Generate PPT slide content following the AnHeng (安恒信息) corporate template design specification. Produces structured Markdown or HTML representing 5 slide types — cover, table of contents, chapter title, content, and contact page — with precise layout coordinates, colors, fonts, and image placements. Use when the user wants to create a presentation using the AnHeng template.
 argument-hint: <title> [--subtitle <subtitle>] [--chapters "Ch1,Ch2,..."] [--output <file>]
 allowed-tools: Read, Edit, Write, Glob

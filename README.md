@@ -38,15 +38,38 @@ Automatically adds hierarchical numbering to Markdown headings.
 | `# Implementation` | `# 二、Implementation` |
 | `## Phase 1` | `## 2.1 Phase 1` |
 
+### `/markdown-to-ppt` — AnHeng Corporate PPT Generator
+
+Generate PPT slide content following the AnHeng (安恒信息) corporate template. Produces structured HTML with 5 slide types — cover, table of contents, chapter title, content, and contact page — with precise layout coordinates, colors, fonts, and image placements.
+
+**Usage:**
+
+```
+/markdown-to-ppt "演示标题" --subtitle "副标题" --chapters "章节1,章节2,章节3"
+```
+
+**Slide Types:**
+
+| Type | Description |
+|------|-------------|
+| Cover Page | Logo, main title, subtitle, contact info |
+| Table of Contents | Up to 5 numbered chapter entries |
+| Chapter Title | Full-screen background with chapter number and title |
+| Content Page | Title bar with two-column content boxes |
+| Contact Page | Contact info, QR code, company info |
+
 ## Plugin Structure
 
 ```
 markdown-skills/
 ├── .claude-plugin/
-│   └── plugin.json          # Plugin metadata
+│   ├── plugin.json            # Plugin metadata
+│   └── marketplace.json       # Marketplace configuration
 ├── skills/
-│   └── number-headings/
-│       └── SKILL.md         # Heading numbering skill
+│   ├── number-headings/
+│   │   └── SKILL.md           # Heading numbering skill
+│   └── markdown-to-ppt/
+│       └── SKILL.md           # PPT generation skill
 ├── README.md
 └── LICENSE
 ```
