@@ -14,6 +14,7 @@ If no arguments are provided, ask the user for the presentation title, subtitle,
 
 - **Must use the `pencil` MCP tool** to create and compose all slides. All element placement, styling, and page assembly must be done through pencil tool calls.
 - **每页幻灯片必须从零开始创建**，不得复制已有页面或元素后修改。所有元素（背景、文字、图片、形状等）都必须逐一重新创建和定位。
+- **每页幻灯片必须放在 pencil 画布的不同位置**，避免堆叠。每页幻灯片（1280×720px）沿垂直方向依次排列，页间间距 100px。即：第 1 页 y=0，第 2 页 y=820，第 3 页 y=1640，第 N 页 y=(N-1)×820。页内所有元素的 y 坐标需加上该页的起始偏移量。
 
 ## Specifications
 
@@ -26,10 +27,26 @@ Before creating slides, read the corresponding spec files for detailed layout, p
 | **Page 1 — Cover** | [page-1-cover.md](specs/page-1-cover.md) | Cover page with logo, title, subtitle, building background |
 | **Page 2 — TOC** | [page-2-toc.md](specs/page-2-toc.md) | Table of contents with 5 numbered entries and gradient bars |
 | **Page 3 — Chapter Title** | [page-3-chapter.md](specs/page-3-chapter.md) | Full-screen chapter title with large number |
-| **Page 4 — Content** | [page-4-content.md](specs/page-4-content.md) | Content page with title bar and two-column layout |
+| **Page 4 — Content** | [page-4-content.md](specs/page-4-content.md) | Content page with title bar and AI-adaptive layout |
 | **Page 5 — Contact** | [page-5-contact.md](specs/page-5-contact.md) | Closing page with contact info, QR code, building image |
 
-## Generation Rules
+## Workflow
+
+### Phase 1 — 文档分析与内容规划
+
+在使用 pencil 创建之前，必须先完成以下分析：
+
+1. **读取并理解文档**：完整阅读用户提供的 Markdown 文档内容。
+2. **提取结构**：识别文档标题、副标题、章节划分。
+3. **逐页规划内容**：为每一页 PPT 明确分配内容，列出：
+   - 页面类型（Cover / TOC / Chapter Title / Content / Contact）
+   - 该页包含的具体文字、数据或图片
+   - 内容是否需要拆分为多页（单页内容过多时）
+4. **输出内容大纲**：将规划结果以清单形式展示给用户确认，再进入创建阶段。
+
+### Phase 2 — 使用 Pencil 创建 PPT
+
+确认内容规划后，按以下规则使用 `pencil` MCP tool 逐页创建：
 
 1. **Slide order**: Always generate pages in order — Cover → TOC → Chapter Title(s) → Content(s) → Contact.
 2. **Chapter titles**: Generate one Page 3 (chapter title) before each chapter's content pages.
