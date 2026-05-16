@@ -6,9 +6,15 @@
   },
   "plugins": [
     {
-      "name": "markdown-skills",
-      "source": "./",
-      "description": "A collection of Claude Code skills for working with Markdown documents",
+      "name": "number-headings",
+      "source": "./skills/number-headings",
+      "description": "Normalize and number Markdown headings. Fixes heading level structure and adds hierarchical numbering (Chinese numerals for H1, Arabic dot-notation for H2+).",
+      "version": "1.1.0"
+    },
+    {
+      "name": "markdown-to-ppt",
+      "source": "./skills/markdown-to-ppt",
+      "description": "Generate PPT slide content following the AnHeng (安恒信息) corporate template design specification, producing cover, TOC, chapter, content, and contact slides.",
       "version": "1.0.0"
     }
   ]
