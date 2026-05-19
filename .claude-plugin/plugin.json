@@ -1,0 +1,20 @@
+{
+  "name": "markdown-skills",
+  "version": "1.0.0",
+  "description": "A collection of skills for working with Markdown documents: normalize and number headings, plan PPT slide content, and generate slides following the AnHeng (安恒信息) corporate template.",
+  "author": {
+    "name": "tecaccc",
+    "url": "https://github.com/tecaccc"
+  },
+  "repository": "https://github.com/tecaccc/markdown-skills",
+  "license": "MIT",
+  "keywords": [
+    "markdown",
+    "skills",
+    "ppt",
+    "presentation",
+    "slides",
+    "headings",
+    "anheng"
+  ]
+}
