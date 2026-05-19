@@ -4,24 +4,29 @@
     "name": "tecaccc",
     "url": "https://github.com/tecaccc/markdown-skills"
   },
+  "metadata": {
+    "description": "Markdown 处理与幻灯片生成技能集合",
+    "version": "1.0.0"
+  },
   "plugins": [
     {
       "name": "number-headings",
-      "source": "./skills/number-headings",
       "description": "Normalize and number Markdown headings. Fixes heading level structure and adds hierarchical numbering (Chinese numerals for H1, Arabic dot-notation for H2+).",
-      "version": "1.1.0"
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/number-headings"
+      ]
     },
     {
-      "name": "ppt-editor",
-      "source": "./skills/ppt-editor",
-      "description": "Generate PPT slide content following the AnHeng (安恒信息) corporate template design specification, producing cover, TOC, chapter, content, and contact slides.",
-      "version": "1.0.0"
-    },
-    {
-      "name": "ppt-planner",
-      "source": "./skills/ppt-planner",
-      "description": "Analyze a Markdown document and design the page-by-page content plan for a slide deck — chapter division, per-page content, and layout — outputting a reviewable .ppt-design.md draft for ppt-editor to consume.",
-      "version": "1.0.0"
+      "name": "ppt-skills",
+      "description": "PPT 设计与生成技能集合：ppt-planner 分析 Markdown 并产出可审阅的逐页内容规划草案，ppt-editor 按安恒信息企业模板规范生成最终幻灯片内容。",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/ppt-planner",
+        "./skills/ppt-editor"
+      ]
     }
   ]
 }
