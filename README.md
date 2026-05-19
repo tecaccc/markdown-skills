@@ -38,14 +38,30 @@ Automatically adds hierarchical numbering to Markdown headings.
 | `# Implementation` | `# 二、Implementation` |
 | `## Phase 1` | `## 2.1 Phase 1` |
 
-### `/markdown-to-ppt` — AnHeng Corporate PPT Generator
+### `/ppt-planner` — PPT 内容设计
+
+读取一个 Markdown 文档，分析其结构后**为每一页 PPT 规划内容**：章节划分、每页的标题/副标题/正文、推荐的排版方式、TOC 条目等。产出一个 `<input>.ppt-design.md` 设计稿，用户可审阅/修改后交给 `/ppt-editor` 生成幻灯片。
+
+这是 `/ppt-editor` 推荐的前置步骤——先把"每一页装什么"想清楚，再开始排版。
+
+**Usage:**
+
+```
+/ppt-planner path/to/document.md
+/ppt-planner path/to/document.md --output deck-plan.ppt-design.md --max-bullets 5
+```
+
+**输出：** 一份结构化的设计稿 markdown 文件，包含每页的 `type` / `title` / `subtitle` / `layout` / `body` 字段，`ppt-editor` 可直接消费。
+
+### `/ppt-editor` — AnHeng Corporate PPT Generator
 
 Generate PPT slide content following the AnHeng (安恒信息) corporate template. Produces structured HTML with 5 slide types — cover, table of contents, chapter title, content, and contact page — with precise layout coordinates, colors, fonts, and image placements.
 
 **Usage:**
 
 ```
-/markdown-to-ppt "演示标题" --subtitle "副标题" --chapters "章节1,章节2,章节3"
+/ppt-editor "演示标题" --subtitle "副标题" --chapters "章节1,章节2,章节3"
+/ppt-editor deck-plan.ppt-design.md     # 直接消费 ppt-planner 产出的设计稿
 ```
 
 **Slide Types:**
@@ -68,7 +84,9 @@ markdown-skills/
 ├── skills/
 │   ├── number-headings/
 │   │   └── SKILL.md           # Heading numbering skill
-│   └── markdown-to-ppt/
+│   ├── ppt-planner/
+│   │   └── SKILL.md           # PPT content planning skill
+│   └── ppt-editor/
 │       └── SKILL.md           # PPT generation skill
 ├── README.md
 └── LICENSE

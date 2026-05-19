@@ -65,9 +65,9 @@ Continue standard Chinese numeral composition rules beyond 12.
 
 1. Maintain a counter array `[c1, c2, c3, c4, c5, c6]` initialized to all zeros.
 2. For each heading line (outside code blocks and front matter):
-   - Strip any existing numbering:
-     - H1: strip leading Chinese numeral + `、` (e.g., `一、`).
-     - H2+: strip leading Arabic dot-notation + space (e.g., `1.2 `, `1.2.3 `).
+   - Strip any existing numbering using these patterns:
+     - H1: remove a leading sequence of Chinese numeral characters followed by `、`. Match pattern: one or more characters in the range `[一-鿿]` immediately followed by `、` (U+3001). Example: `一、`, `十一、`, `二十三、` are all stripped.
+     - H2+: remove a leading Arabic dot-notation prefix followed by a space. Match pattern: `\d+(\.\d+)+\s` — one or more digits, at least one `.digit` group, then a space. Example: `1.1 `, `2.1.3 ` are stripped; a lone `1. ` (single number with dot) does **not** match and is left untouched.
    - Let `L` = heading level after normalization.
    - Increment `c[L]`; reset `c[L+1]` through `c[6]` to 0.
    - Build prefix:
@@ -100,7 +100,7 @@ Continue standard Chinese numeral composition rules beyond 12.
 ## Phase 1
 ### Detail
 ```
-*(H2→H1, H4→H2 because gap from H1, H3→H2 because gap from H1, H6→H3 because gap from H2, H2→H1, H3→H2, H5→H3 because gap from H2)*
+*(Step 1 promotes all levels by 1: H2→H1, H4→H3, H3→H2, H6→H5, H2→H1, H3→H2, H5→H4. Step 2 fixes gaps in the promoted sequence: H3→H2 because it follows H1 with a gap of 2; H2 after H2 is fine, no change; H5→H3 because it follows H2 with a gap of 3; H4→H3 because it follows H2 with a gap of 2.)*
 
 **After Phase 2 — Number:**
 ```markdown
@@ -127,7 +127,7 @@ If no level changes were needed, state "Heading levels are already well-structur
 
 ## Edge Cases
 
-- Skip headings inside fenced code blocks (` ``` ` or `~~~`).
+- Skip headings inside fenced code blocks. A fence is a line whose content matches `^(`{3,}|~{3,})` (optionally followed by a language identifier such as `markdown` or `python`). Track a boolean `in_code_block` flag: toggle it each time a fence line is encountered. Any heading line where `in_code_block` is true is ignored entirely — do not count it, normalize it, or number it.
 - Skip YAML front matter (lines between `---` at the very top of the file).
 - If a heading already has numbering (Chinese or Arabic), strip it before re-numbering (idempotent).
 - If the document has only one heading level, normalization promotes it to H1 and numbering uses Chinese numerals only.

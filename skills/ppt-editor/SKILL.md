@@ -1,5 +1,5 @@
 ---
-name: markdown-to-ppt
+name: ppt-editor
 description: Generate PPT slide content following the AnHeng (安恒信息) corporate template design specification. Produces 5 slide types — cover, table of contents, chapter title, content, and contact page — with precise layout coordinates, colors, fonts, and image placements. Use when the user wants to create a presentation using the AnHeng template.
 argument-hint: <title> [--subtitle <subtitle>] [--chapters "Ch1,Ch2,..."] [--output <file>]
 allowed-tools: Read, Edit, Write, Glob
@@ -34,7 +34,9 @@ Before creating slides, read the corresponding spec files for detailed layout, p
 
 ### Phase 1 — 文档分析与内容规划
 
-在使用 pencil 创建之前，必须先完成以下分析：
+> **推荐**：复杂文档请先使用 `/ppt-planner <file.md>` 生成 `.ppt-design.md` 设计稿，由用户审阅/修改后再交给本技能。本技能识别到输入是 `.ppt-design.md` 文件时，直接消费其中的每页内容，跳过本阶段的分析。
+
+在使用 pencil 创建之前，必须先完成以下分析（如果输入是 ppt-planner 产出的设计稿则直接读取即可）：
 
 1. **读取并理解文档**：完整阅读用户提供的 Markdown 文档内容。
 2. **提取结构**：识别文档标题、副标题、章节划分。
@@ -43,6 +45,12 @@ Before creating slides, read the corresponding spec files for detailed layout, p
    - 该页包含的具体文字、数据或图片
    - 内容是否需要拆分为多页（单页内容过多时）
 4. **输出内容大纲**：将规划结果以清单形式展示给用户确认，再进入创建阶段。
+
+**消费设计稿格式：** 当输入文件以 `.ppt-design.md` 结尾或 frontmatter 中包含 `generated_by: ppt-planner` 时：
+- 读取 frontmatter 拿到 `title` / `subtitle` / `chapters`。
+- 按 `## Slide <N> — <Type>` 分块解析每页。
+- 每页的 `type` / `title` / `subtitle` / `layout` / `body` 字段直接映射到对应的 Page 1–5 spec。
+- `layout` 字段决定 Page 4 内容页应使用哪种排版（对应 [page-4-content.md](specs/page-4-content.md) 中列出的方案）。
 
 ### Phase 2 — 使用 Pencil 创建 PPT
 

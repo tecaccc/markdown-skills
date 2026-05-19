@@ -12,9 +12,15 @@
       "version": "1.1.0"
     },
     {
-      "name": "markdown-to-ppt",
-      "source": "./skills/markdown-to-ppt",
+      "name": "ppt-editor",
+      "source": "./skills/ppt-editor",
       "description": "Generate PPT slide content following the AnHeng (安恒信息) corporate template design specification, producing cover, TOC, chapter, content, and contact slides.",
+      "version": "1.0.0"
+    },
+    {
+      "name": "ppt-planner",
+      "source": "./skills/ppt-planner",
+      "description": "Analyze a Markdown document and design the page-by-page content plan for a slide deck — chapter division, per-page content, and layout — outputting a reviewable .ppt-design.md draft for ppt-editor to consume.",
       "version": "1.0.0"
     }
   ]
