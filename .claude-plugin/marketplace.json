@@ -13,7 +13,7 @@
       "name": "number-headings",
       "description": "Normalize and number Markdown headings. Fixes heading level structure and adds hierarchical numbering (Chinese numerals for H1, Arabic dot-notation for H2+).",
       "source": "./",
-      "strict": false,
+      "strict": true,
       "skills": [
         "./skills/number-headings"
       ]
@@ -22,7 +22,7 @@
       "name": "ppt-skills",
       "description": "PPT 设计与生成技能集合：ppt-planner 分析 Markdown 并产出可审阅的逐页内容规划草案，ppt-editor 按安恒信息企业模板规范生成最终幻灯片内容。",
       "source": "./",
-      "strict": false,
+      "strict": true,
       "skills": [
         "./skills/ppt-planner",
         "./skills/ppt-editor"
