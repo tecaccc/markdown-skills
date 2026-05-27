@@ -18,6 +18,32 @@ This skill is the **planning stage** that runs **before** `ppt-editor`. It does 
 
 Bullets are the *last resort*, not the default. If you produce a content slide whose body is just a flat bullet list, you should be able to defend why no diagram form fits — and write that reason in the slide's `notes` field.
 
+## 强制规则: 数值数据必须图形化 (Numerical Data → Always Visualized)
+
+**任何包含数值的内容都必须以图形方式呈现,绝不能埋在普通正文段落或 bullet 列表中。** 数字埋在文字里 = 设计失败。
+
+判定优先级 (从单到多):
+
+| 数值规模 | 必用展示形式 | 理由 |
+|----------|--------------|------|
+| 1 个核心数值 | `big-number`(超大字号 + 说明文字) | 给数字最大视觉权重 |
+| 2–4 个并列指标 | `kpi-row`(KPI 卡片行) | 多指标横向对比 |
+| 5+ 个类别对比(同一维度) | `bar-chart` 柱状图 | 类别间数值对比 |
+| 时间序列(>3 个时间点) | `line-chart` 折线图 / `area-chart` 面积图 | 显示趋势走向 |
+| 占比 / 构成 (2–6 个部分) | `donut-chart` 环形图(优先) / `pie-chart` 饼图 | 整体的组成关系 |
+| 多类别 × 多组件构成 | `stacked-bar` 堆叠柱状图 | 既看总量也看结构 |
+| 单一进度 / 完成度 | `progress-bar` 进度条 / `gauge` 仪表盘 | 目标完成情况 |
+| 多维度对比(3+ 维度,2–4 主体) | `radar-chart` 雷达图 | 综合素质画像 |
+| 两组并列类别对比 | `grouped-bar` 分组柱状图 | 例如"两年同期对比" |
+
+**禁止写法 (反例)**:
+> "本季度销售额达 1.2 亿元,环比增长 23%,Q1 为 9750 万,Q2 为 1.05 亿,Q3 为 1.18 亿,Q4 为 1.2 亿。"
+
+**正确做法**:
+该段拥有 4 个时间点的数值 → 必须使用 `line-chart` 显示 Q1–Q4 趋势,Q4 末值以加粗节点 + 标签突出。
+
+**例外**: 仅当数值是"附带性说明"(例如版本号、引用编号、不参与对比的常量)时可保留正文形式。判定标准:**该数字是否值得读者关注其量级/对比/趋势?** 若是 → 必须图形化。
+
 ## Workflow
 
 ### Phase 1 — Read and Analyze the Document
@@ -32,7 +58,14 @@ Bullets are the *last resort*, not the default. If you produce a content slide w
    - **Hierarchical**: levels, layers, importance order → **pyramid / tree**
    - **Comparative**: A vs B, before/after, options weighed → **comparison cards / quadrant / table**
    - **Parallel features**: 3–6 coordinate items, "key capabilities" → **icon grid / card grid**
-   - **Quantitative**: numbers, metrics, percentages → **big-number callout / KPI block**
+   - **Quantitative single value**: one dominant metric → **`big-number`**
+   - **Quantitative multi-metric (2–4)**: side-by-side KPIs → **`kpi-row`**
+   - **Quantitative comparison (5+ categories)**: ranking/comparing values → **`bar-chart`**
+   - **Quantitative time series**: trends over time → **`line-chart`** / **`area-chart`**
+   - **Quantitative proportion**: parts of whole → **`donut-chart`** / **`pie-chart`**
+   - **Quantitative composition**: multi-component over categories → **`stacked-bar`**
+   - **Quantitative single progress**: completion / utilization → **`progress-bar`** / **`gauge`**
+   - **Quantitative multi-dimensional**: comparing entities across many axes → **`radar-chart`**
    - **Relational / Architectural**: components and their connections → **architecture diagram / concept map**
    - **Cyclical**: feedback loop, repeating process → **circular flow**
    - **Narrative**: long prose with no inherent structure → **summary + key takeaway**
@@ -71,6 +104,10 @@ For each chapter, walk through its body and decide how many **content slides** i
 | Long paragraph (>120 words) | Extract **one key sentence as headline**, summarize rest into ≤3 short bullets |
 | A code block | Single slide, monospace, smaller font |
 | Standalone metric / statistic | Convert to **big-number callout** (XL font + supporting label) |
+| Numbers in prose / bullets (2+ comparable values) | **Extract into chart** per the 强制规则 table — never leave numbers inline |
+| Time series (≥3 time points) | **`line-chart`** or **`area-chart`** — never describe trend in words |
+| Percentage breakdown (parts of whole) | **`donut-chart`** (preferred) or **`pie-chart`** |
+| Category ranking / comparison | **`bar-chart`** (vertical for ≤6 categories, horizontal for longer labels or 6+ categories) |
 
 **Per-slide content limits:**
 - Title: ≤ 20 Chinese characters / ~40 ASCII
@@ -80,24 +117,38 @@ For each chapter, walk through its body and decide how many **content slides** i
 
 ### Phase 4 — 图形优先排版决策 (Diagram-First Layout)
 
-For each content slide, walk this **decision tree in order** — pick the first match.
+For each content slide, walk this **decision tree in order** — pick the first match. **Numerical content always wins** — if the slide contains comparable numbers, jump straight to the numerical branch (steps 1–8).
 
-1. **Is it sequential/process?** → **`flow`** (horizontal or vertical chain of steps with arrows)
-2. **Is it hierarchical/tiered?** → **`pyramid`** (3–5 layers, broad base or apex emphasis)
-3. **Is it comparative (A vs B)?** → **`comparison`** (two cards side-by-side with parallel rows)
-4. **Is it 2×2 trade-off space?** → **`quadrant`** (4 cells, labeled axes)
-5. **Is it 3–6 parallel features/capabilities?** → **`icon-grid`** (each item = icon + short label + 1-line description)
-6. **Is it a single dominant metric?** → **`big-number`** (giant number/percent + supporting caption)
-7. **Is it 2–4 KPIs together?** → **`kpi-row`** (row of big-number cards)
-8. **Is it cyclical/loop?** → **`circular-flow`** (3–6 nodes around a circle with arrows)
-9. **Is it a timeline (dates / phases over time)?** → **`timeline`** (horizontal axis with milestones)
-10. **Is it components with connections (architecture)?** → **`architecture`** (boxes + lines/arrows)
-11. **Has it a referenced image asset?** → **`image-left`** / **`image-right`** / **`full-image`**
-12. **Is it a short reference table?** → **`table`**
-13. **Headline metric + supporting detail below?** → **`top-bottom`**
-14. **Single coherent narrative or quote?** → **`single-column`** (last resort for prose; extract a key sentence as the visual hero)
-15. **Two parallel ideas not strict A vs B?** → **`two-column`**
-16. **None of the above and you have 3+ ideas?** → reconsider the source; you are probably hiding a structure. Re-read and pick a diagram type.
+**Numerical branch (强制优先):**
+
+1. **Single dominant metric?** → **`big-number`** (giant number/percent + supporting caption)
+2. **2–4 KPIs together?** → **`kpi-row`** (row of big-number cards)
+3. **Single progress / utilization rate?** → **`progress-bar`** or **`gauge`**
+4. **Time series (≥3 time points)?** → **`line-chart`** (1–3 series) / **`area-chart`** (cumulative or single-series volume)
+5. **Parts of a whole (2–6 categories, sum = 100%)?** → **`donut-chart`** (preferred for modern look) / **`pie-chart`**
+6. **Category comparison (≥5 categories, single metric)?** → **`bar-chart`** (vertical default; horizontal if labels are long)
+7. **Multi-component breakdown over categories?** → **`stacked-bar`** (each bar shows composition)
+8. **Multi-dimensional entity comparison (2–4 entities × 3+ dimensions)?** → **`radar-chart`**
+
+**Structural branch (non-numerical):**
+
+9. **Is it sequential/process?** → **`flow`** (horizontal or vertical chain of steps with arrows)
+10. **Is it hierarchical/tiered?** → **`pyramid`** (3–5 layers, broad base or apex emphasis)
+11. **Is it comparative (A vs B, non-numerical)?** → **`comparison`** (two cards side-by-side with parallel rows)
+12. **Is it 2×2 trade-off space?** → **`quadrant`** (4 cells, labeled axes)
+13. **Is it 3–6 parallel features/capabilities?** → **`icon-grid`**
+14. **Is it cyclical/loop?** → **`circular-flow`**
+15. **Is it a timeline (non-numerical milestones over time)?** → **`timeline`**
+16. **Is it components with connections (architecture)?** → **`architecture`**
+17. **Has it a referenced image asset?** → **`image-left`** / **`image-right`** / **`full-image`**
+18. **Is it a short reference table?** → **`table`**
+
+**Fallback branch (text-based — last resort):**
+
+19. **Headline metric + supporting detail below?** → **`top-bottom`**
+20. **Single coherent narrative or quote?** → **`single-column`** (extract a key sentence as the visual hero)
+21. **Two parallel ideas not strict A vs B?** → **`two-column`**
+22. **None of the above and you have 3+ ideas?** → reconsider the source; you are probably hiding a structure. Re-read and pick a diagram type.
 
 State the chosen **`layout`** explicitly in the design draft so `ppt-editor` can render it.
 
@@ -374,6 +425,120 @@ Fill the `diagram` block according to the chosen layout. Keep node labels ≤ 8 
     - ["上线周期", "6 个月", "2 个月"]
 ```
 
+#### Chart schemas (数值图表)
+
+When the source has numerical data that triggers the numerical branch (Phase 4 steps 1–8), use the schemas below. Every data point must be a real number from the source — never invent values.
+
+**bar-chart** (类别对比):
+```
+- **diagram**:
+  - orientation: vertical | horizontal   # 类别名长时优先 horizontal
+  - x_label: "客户行业"   # 类别轴名称(可选)
+  - y_label: "签约客户数" # 数值轴名称(可选)
+  - unit: "家"             # 数值单位(可选,标注在轴或数据标签上)
+  - series:
+    - { label: "金融", value: 42 }
+    - { label: "政府", value: 38 }
+    - { label: "能源", value: 27 }
+    - { label: "医疗", value: 19 }
+    - { label: "制造", value: 15 }
+  - highlight: "金融"      # 可选,该类别将以 #C70019 高亮,其他用 #08287F
+```
+
+**grouped-bar** (多组类别对比,如年度对比):
+```
+- **diagram**:
+  - orientation: vertical
+  - x_label: "季度"
+  - y_label: "营收 (亿元)"
+  - groups: ["Q1", "Q2", "Q3", "Q4"]
+  - series:
+    - { label: "2024", values: [0.85, 1.02, 1.10, 1.18], color: "#4A6FA5" }
+    - { label: "2025", values: [0.98, 1.20, 1.35, 1.50], color: "#C70019" }
+```
+
+**line-chart** (时间序列趋势):
+```
+- **diagram**:
+  - x_label: "月份"
+  - y_label: "DAU (万)"
+  - x_categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"]
+  - series:
+    - { label: "活跃用户", values: [12, 14, 18, 23, 29, 35], color: "#08287F" }
+    - { label: "付费用户", values: [3, 4, 5, 7, 9, 12], color: "#C70019" } # 可选第二条
+  - highlight_point: { x: "Jun", note: "上线推广活动" }   # 可选关键点标注
+```
+
+**area-chart** (累积量 / 单序列体量):
+```
+- **diagram**:
+  - x_label: "月份"
+  - y_label: "累计交易额 (亿元)"
+  - x_categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"]
+  - values: [1.2, 2.5, 4.1, 6.0, 8.3, 11.0]
+  - fill_color: "#08287F"   # 默认品牌蓝,半透明
+```
+
+**donut-chart** / **pie-chart** (占比构成):
+```
+- **diagram**:
+  - center_label: "100 亿"   # donut 中心总量(可选,仅 donut)
+  - center_caption: "市场规模"   # donut 中心说明(可选)
+  - slices:
+    - { label: "金融", value: 42, color: "#08287F" }
+    - { label: "政府", value: 28, color: "#1E3A8A" }
+    - { label: "能源", value: 18, color: "#4A6FA5" }
+    - { label: "其他", value: 12, color: "#CCCCCC" }
+  - show_percent: true       # 数据标签显示百分比
+```
+
+**stacked-bar** (多组件构成 × 多类别):
+```
+- **diagram**:
+  - orientation: vertical
+  - x_label: "年份"
+  - y_label: "收入构成 (亿元)"
+  - categories: ["2022", "2023", "2024", "2025"]
+  - components:
+    - { label: "产品", values: [3.2, 4.5, 6.1, 8.0], color: "#08287F" }
+    - { label: "服务", values: [1.5, 2.2, 3.0, 4.5], color: "#4A6FA5" }
+    - { label: "订阅", values: [0.3, 0.8, 1.6, 3.0], color: "#C70019" }
+```
+
+**progress-bar** (单一进度):
+```
+- **diagram**:
+  - label: "年度目标完成度"
+  - current: 78
+  - target: 100
+  - unit: "%"
+  - color: "#08287F"
+  - milestone_label: "Q3 末进度"   # 可选
+```
+
+**gauge** (仪表盘式进度):
+```
+- **diagram**:
+  - label: "系统健康度"
+  - value: 92
+  - max: 100
+  - unit: "%"
+  - thresholds:
+    - { upto: 60, color: "#C70019", label: "风险" }
+    - { upto: 80, color: "#E0A030", label: "关注" }
+    - { upto: 100, color: "#08287F", label: "健康" }
+```
+
+**radar-chart** (多维度对比):
+```
+- **diagram**:
+  - axes: ["性能", "安全", "易用", "成本", "可扩展", "支持"]
+  - max_value: 10
+  - series:
+    - { label: "本方案", values: [9, 9, 8, 7, 9, 8], color: "#C70019" }
+    - { label: "友商 A", values: [7, 6, 6, 9, 5, 6], color: "#4A6FA5" }
+```
+
 For text-based layouts (`single-column`, `two-column`, `top-bottom`, `full-image`, image-left/right), keep using the original `body` bullet format from v1.
 
 ### Phase 9 — Show the Plan Summary
@@ -384,8 +549,9 @@ Print to the user:
 2. **Slide count** with breakdown by type (Cover/TOC/Chapter/Content/Contact).
 3. **Chapter table** — chapter name → number of content slides → dominant layout used.
 4. **Diagram coverage** — count of content slides using diagrams vs. text-only bullets, expressed as `X / Y diagrams (Z%)`. If <60%, warn that the deck may look bullet-heavy and suggest re-planning specific slides.
-5. **Open questions** — anything you had to guess (missing subtitle, ambiguous chapter grouping, slide where no diagram fit).
-6. **Next step**: review/edit the draft, run `/ppt-editor` against the design file, then optionally `/ppt-beautifier` for visual polish.
+5. **Numerical visualization audit** — for every numerical value in the source (run a quick scan: digits + `%` + 数字 + 「万/亿/千/百」 + 「倍/次/年」 etc.), verify it appears in a chart/big-number/kpi-row/progress-bar/gauge slide rather than inline text. List any orphan numbers that ended up in bullets or prose and propose which slide to convert.
+6. **Open questions** — anything you had to guess (missing subtitle, ambiguous chapter grouping, slide where no diagram fit).
+7. **Next step**: review/edit the draft, run `/ppt-editor` against the design file, then optionally `/ppt-beautifier` for visual polish.
 
 ## Constraints
 
@@ -394,6 +560,8 @@ Print to the user:
 - **Do not** silently truncate content. Split when too dense, and note the split.
 - **Do not** invent dates, speakers, statistics, or quotes that are not in the source.
 - **Do not** default to bullet lists. Every content slide must pass the diagram-first decision tree (Phase 4) — if you fall back to bullets, justify it in `notes`.
+- **Do not** leave numerical data in prose or bullets. Any number worth comparing must end up in a chart / big-number / kpi-row / progress / gauge slide per the 强制规则 (top of this skill).
+- **Do not** invent data points. Chart values must come verbatim from the source; if the source gives only some data points of a series, render only those and add a `notes` entry noting the gap.
 - If the source contains `![alt](path)`, preserve those paths in `assets` so they survive into generation.
 
 ## Edge Cases

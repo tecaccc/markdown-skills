@@ -216,6 +216,158 @@ y_top of layer i = 220 + i × (layer_height + 16)
 
 ---
 
+## Chart layouts (数值图表)
+
+Charts share a common plotting area inside the content region:
+
+```
+Plot area:  x=120, y=260, width=1040, height=340
+Axis stroke: 1.5px, color #4A6FA5
+Tick stroke: 1px,   color #CCCCCC
+Tick length: 4px
+```
+
+Reserve `y=220–250` for an optional chart title, and `y=620–660` for an optional axis label / source caption (10pt `#4A6FA5`).
+
+### `bar-chart` — Category Comparison
+
+**Vertical orientation** (default):
+```
+N bars, evenly spaced inside the plot area.
+bar_width = floor((plot_width - (N+1)×gap) / N)    # gap = 20
+bar_x_i   = plot_x + gap + i × (bar_width + gap)
+max_value = max(series.value) × 1.1                # 10% headroom
+bar_height_i = (value_i / max_value) × plot_height
+bar_y_i      = plot_y + (plot_height - bar_height_i)
+```
+**Each bar**:
+- Fill `#08287F` by default; if `highlight == label`, fill `#C70019`.
+- Value label above bar: 14pt bold matching bar color, centered on bar.
+- Category label below x-axis: 12pt `#08287F`, centered.
+- Y-axis: 5 evenly spaced ticks from 0 to ceil(max_value) with grid-line 0.5px `#E5E5E5`.
+
+**Horizontal orientation**: swap x/y. `bar_height=24`, gap=12. Labels right of bars; categories left of plot area, right-aligned.
+
+### `grouped-bar` — Multi-group Comparison
+
+```
+G groups × S series per group
+slot_width = (plot_width - (G+1)×group_gap) / G    # group_gap = 30
+bar_width  = (slot_width - (S+1)×bar_gap) / S      # bar_gap = 4
+```
+Each series uses its `color`; group label below the slot center, 12pt `#08287F`. Legend in top-right of plot area: small color swatch + 12pt label, one per series, spaced 18px apart.
+
+### `line-chart` — Time Series
+
+```
+For each series:
+  x_i = plot_x + i × (plot_width / (N-1))
+  y_i = plot_y + plot_height - (value_i / max_value) × plot_height
+  draw polyline through points, stroke 2.5px, color = series.color
+  at each point draw 6×6 circle, fill = series.color, white 1px border
+```
+
+- X-axis: tick + label at each `x_i`, 12pt `#08287F`.
+- Y-axis: 5 evenly spaced ticks, grid 0.5px `#E5E5E5`.
+- **highlight_point** (optional): enlarge that point to 10×10 with brand-red fill, draw a 1px dashed `#C70019` vertical line from point to x-axis, and place the `note` as a 12pt bold `#C70019` callout 16px above the point.
+- Legend (only if >1 series): top-right of plot area, same as grouped-bar.
+
+### `area-chart` — Cumulative / Volume
+
+Same as line-chart for one series, but:
+- Fill the polygon from the polyline down to the x-axis with `fill_color` at 30% opacity.
+- Stroke the top edge 2.5px with `fill_color` at 100% opacity.
+
+### `donut-chart` — Proportion (preferred)
+
+```
+center = (640, plot_y + plot_height/2)   # ≈ (640, 430)
+outer_radius = 150
+inner_radius = 90       # donut hole
+```
+For each slice with cumulative angle `θ_start → θ_end` (start at -90°, sweep clockwise = value/total × 360°):
+- Draw an arc-segment (annular sector) from `θ_start` to `θ_end`, fill = slice.color.
+- If the pencil tool cannot draw true arcs, approximate by tessellating into 6° triangular wedges.
+- Slice label: outside the donut at the midpoint angle, 14pt `#08287F`. If `show_percent`, append `(XX%)` in 12pt.
+- Lead line: 1px `#CCCCCC` from outer edge to label start when label is more than 8px from arc midpoint.
+
+**Center text** (donut only):
+- `center_label`: 28pt bold `#08287F`, centered.
+- `center_caption`: 12pt `#4A6FA5`, centered, 6px below center_label.
+
+### `pie-chart` — Proportion (legacy)
+
+Same as `donut-chart` but `inner_radius = 0` (no hole, no center text). Use only when the planner explicitly requests pie.
+
+### `stacked-bar` — Multi-component Composition
+
+```
+N category columns
+column_width = (plot_width - (N+1)×gap) / N        # gap = 30
+For each column k:
+  total_k = sum(components[*].values[k])
+  stack components bottom-up:
+    seg_height = (value / max_total) × plot_height
+    seg fill   = component.color
+```
+- Total label above each column: 14pt bold `#08287F`.
+- Optional value-in-segment label: 11pt `#FFFFFF` centered, only if segment height ≥ 32px.
+- Legend top-right.
+
+### `progress-bar` — Single Progress
+
+```
+Track: x=160, y=400, width=960, height=40
+       fill #F5F5F5, 1px border #CCCCCC, corner radius 20
+Fill:  same y/height, width = (current/target) × track_width
+       fill = color (default #08287F), corner radius 20
+```
+- `label`: 18pt bold `#08287F`, x=160, y=350.
+- Current/target text: right-aligned at (1120, 350), 16pt `#08287F` — format `78% / 100%` or `78 / 100 (unit)`.
+- `milestone_label` (optional): 12pt `#C70019`, placed below the fill end at (fill_end_x, 450), centered.
+
+### `gauge` — Semi-circular Gauge
+
+```
+center = (640, 480)
+outer_radius = 200, inner_radius = 160        # arc thickness 40
+sweep: -180° (left) → 0° (right), total 180°
+```
+
+**Track**: draw the full 180° annular arc, fill `#F5F5F5`.
+
+**Thresholds**: split the 180° arc into segments per `thresholds[]`. For each threshold, the arc from previous upto to current upto is filled with its color.
+
+**Needle**: line from center pointing to angle = `-180° + (value/max) × 180°`, length = `inner_radius - 10`, stroke 4px `#08287F`, with a 14×14 circle at center, fill `#08287F`.
+
+**Value label**: `{value}{unit}` at (640, 470), 40pt bold `#08287F`, centered.
+**Caption**: `label` at (640, 540), 16pt `#4A6FA5`, centered.
+**Threshold tick labels**: tiny 10pt `#4A6FA5` at each threshold boundary, outside the outer radius.
+
+### `radar-chart` — Multi-dimensional
+
+```
+center = (640, 440)
+radius = 180
+axes count = A
+```
+For each axis i: direction angle `θ_i = -90° + i × (360°/A)`.
+
+**Background grid**: 4 concentric polygons at 25/50/75/100% of `max_value`, stroke 1px `#E5E5E5`.
+
+**Axis spokes**: line from center to outer vertex for each axis, stroke 1px `#CCCCCC`.
+
+**Axis labels**: 12pt `#08287F` just outside outer vertex, anchored based on quadrant.
+
+**Each series**:
+- Compute vertex for each axis: `vertex_i = center + (value_i/max_value) × radius × (cos θ_i, sin θ_i)`.
+- Draw closed polygon through vertices, stroke 2px `series.color`, fill `series.color` at 20% opacity.
+- Vertex dots: 5×5 circles, fill `series.color`.
+
+Legend top-right.
+
+---
+
 ## `table` — Reference Table
 
 ```
