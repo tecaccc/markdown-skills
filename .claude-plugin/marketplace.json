@@ -20,12 +20,13 @@
     },
     {
       "name": "ppt-skills",
-      "description": "PPT 设计与生成技能集合：ppt-planner 分析 Markdown 并产出可审阅的逐页内容规划草案，ppt-editor 按安恒信息企业模板规范生成最终幻灯片内容。",
+      "description": "PPT 设计、生成与美化技能集合：ppt-planner 分析 Markdown 并产出图形优先(flow/pyramid/icon-grid/big-number 等)的逐页设计草案；ppt-editor 按安恒信息企业模板规范渲染含图形的幻灯片；ppt-beautifier 对成品 .pen 做视觉打磨(层次/留白/对齐/装饰元素)。",
       "source": "./",
       "strict": true,
       "skills": [
         "./skills/ppt-planner",
-        "./skills/ppt-editor"
+        "./skills/ppt-editor",
+        "./skills/ppt-beautifier"
       ]
     }
   ]

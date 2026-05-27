@@ -1,9 +1,9 @@
 ---
 name: ppt-editor
-description: Generate PPT slide content following the AnHeng (安恒信息) corporate template design specification. Produces 5 slide types — cover, table of contents, chapter title, content, and contact page — with precise layout coordinates, colors, fonts, and image placements. Use when the user wants to create a presentation using the AnHeng template.
+description: Generate PPT slide content following the AnHeng (安恒信息) corporate template design specification. Produces 5 slide types — cover, table of contents, chapter title, content, and contact page — with precise layout coordinates, colors, fonts, and image placements. Renders diagram-rich content pages (flow / pyramid / comparison / quadrant / icon-grid / big-number / kpi-row / circular-flow / timeline / architecture / table) when the design draft requests them. Use when the user wants to create a presentation using the AnHeng template.
 argument-hint: <title> [--subtitle <subtitle>] [--chapters "Ch1,Ch2,..."] [--output <file>]
 allowed-tools: Read, Edit, Write, Glob
-version: 1.0.0
+version: 2.0.0
 ---
 
 Generate a PPT presentation following the AnHeng (安恒信息) corporate template specification based on: $ARGUMENTS
@@ -29,6 +29,7 @@ Before creating slides, read the corresponding spec files for detailed layout, p
 | **Page 3 — Chapter Title** | [page-3-chapter.md](specs/page-3-chapter.md) | Full-screen chapter title with large number |
 | **Page 4 — Content** | [page-4-content.md](specs/page-4-content.md) | Content page with title bar and AI-adaptive layout |
 | **Page 5 — Contact** | [page-5-contact.md](specs/page-5-contact.md) | Closing page with contact info, QR code, building image |
+| **Diagram Patterns** | [diagram-patterns.md](specs/diagram-patterns.md) | Rendering recipes for all diagram layouts (flow, pyramid, comparison, quadrant, icon-grid, big-number, kpi-row, circular-flow, timeline, architecture, table) plus accent element rendering |
 
 ## Workflow
 
@@ -50,7 +51,13 @@ Before creating slides, read the corresponding spec files for detailed layout, p
 - 读取 frontmatter 拿到 `title` / `subtitle` / `chapters`。
 - 按 `## Slide <N> — <Type>` 分块解析每页。
 - 每页的 `type` / `title` / `subtitle` / `layout` / `body` 字段直接映射到对应的 Page 1–5 spec。
-- `layout` 字段决定 Page 4 内容页应使用哪种排版（对应 [page-4-content.md](specs/page-4-content.md) 中列出的方案）。
+- `layout` 字段决定 Page 4 内容页的排版：
+  - **图形类布局**(`flow` / `pyramid` / `comparison` / `quadrant` / `icon-grid` / `big-number` / `kpi-row` / `circular-flow` / `timeline` / `architecture` / `table`) → 参考 [diagram-patterns.md](specs/diagram-patterns.md) 的渲染配方,基于 `diagram` 字段的结构化数据用 pencil 原语(矩形、线条、椭圆、文字)绘制图形。
+  - **文字类布局**(`single-column` / `two-column` / `top-bottom` / `image-left` / `image-right` / `full-image`) → 参考 [page-4-content.md](specs/page-4-content.md),基于 `body` 字段渲染。
+- **`key_highlight` 字段**:每页核心金句。在图形类布局中渲染为顶部 24pt 加粗 `#08287F` 一行(参考 diagram-patterns.md 末尾说明);在文字类布局中作为视觉焦点放大显示。
+- **`accent_elements` 字段**:装饰元素列表。按 [diagram-patterns.md](specs/diagram-patterns.md) "Accent rendering" 章节叠加到所选 layout 之上。
+- **`density` 字段**(`sparse` / `medium` / `dense`):调节字号、间距、元素数量。参考 diagram-patterns.md "Density tuning"。
+- **`visual_role` / `mood` 字段**:仅用作背景理解,不直接影响坐标;但 `mood: aspirational` 可适度加大主标题字号(+10%)。
 
 ### Phase 2 — 使用 Pencil 创建 PPT
 
@@ -69,4 +76,6 @@ Before creating slides, read the corresponding spec files for detailed layout, p
 After generation, report:
 1. **Slides created**: Total number of slides, with type breakdown.
 2. **Chapters**: List of chapter names used.
-3. **Assets required**: List all image files the user needs to provide.
+3. **Diagram coverage**: count of content slides rendered as diagrams vs. text-based, as `X / Y diagrams`.
+4. **Assets required**: List all image files the user needs to provide.
+5. **Next step**: suggest running `/ppt-beautifier <file.pen>` to polish the result (alignment, spacing, visual hierarchy refinements).
